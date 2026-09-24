@@ -17,6 +17,7 @@ common:
   patience: 30
   workers: 4              # Colab has few CPU cores
   plots: true
+  max_det: 1000           # VisDrone images hold up to ~900 objects; the default 300 caps recall
 
 runs:
   # ---- Part I / II: baseline ------------------------------------------------

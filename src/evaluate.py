@@ -42,6 +42,7 @@ def main():
     model = YOLO(str(weights))
     m = model.val(
         data=params["data"], imgsz=params["imgsz"], batch=params["batch"], split=args.split,
+        max_det=params.get("max_det", 300),
         plots=True, project=str(RUNS_DIR), name=f"{args.run}_eval_{args.split}", exist_ok=True,
     )
 

@@ -64,4 +64,4 @@ python src/plot_curves.py baseline p3_imgsz960
 
 ## Fair-comparison controls
 
-All runs share the settings in `common`: 80 epochs, SGD with lr0 = 0.01, batch 16, seed 0 and deterministic mode. Each experiment changes **only** the keys listed under its entry. `src/compare.py` prints those differences next to every result, so each table documents its own controlled variable.
+All runs share the settings in `common`: 80 epochs, SGD with lr0 = 0.01, batch 16, seed 0, deterministic mode, and `max_det=1000`. The last one matters because some VisDrone images contain around 900 objects, and Ultralytics' default of 300 detections per image would cap recall. Each experiment changes **only** the keys listed under its entry. `src/compare.py` prints those differences next to every result, so each table documents its own controlled variable.

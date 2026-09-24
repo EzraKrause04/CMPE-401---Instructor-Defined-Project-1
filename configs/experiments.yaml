@@ -1,0 +1,56 @@
+# Every training run in the project is defined here, so each result in the
+# report maps to exactly one entry. A run's settings are resolved as:
+#   common  ->  base run (if `base:` is set, applied recursively)  ->  the run's own keys
+# Keys other than `base`, `part`, and `description` are passed straight to
+# Ultralytics `model.train()` (https://docs.ultralytics.com/modes/train/#train-settings).
+
+common:
+  data: VisDrone.yaml     # built into Ultralytics; downloads + converts VisDrone2019-DET on first use
+  epochs: 80
+  imgsz: 640
+  batch: 16
+  optimizer: SGD          # pinned (not "auto") so every run uses the same optimizer and lr0
+  lr0: 0.01
+  cos_lr: false
+  seed: 0
+  deterministic: true
+  patience: 30
+  workers: 4              # Colab has few CPU cores
+  plots: true
+
+runs:
+  # ---- Part I / II: baseline ------------------------------------------------
+  baseline:
+    part: I
+    description: YOLO26n, default augmentation, 640 px
+    model: yolo26n.pt
+
+  # ---- Part III: controlled experiment (one variable changed: image resolution)
+  p3_imgsz960:
+    part: III
+    description: Baseline at 960 px to test the small-object resolution hypothesis
+    base: baseline
+    imgsz: 960
+
+  # ---- Part IV: improvement cycle --------------------------------------------
+  # Pick ONE of these after reading the baseline loss curves (Part II), and set
+  # `base:` to whichever Part III run won. Change a single thing per cycle.
+  p4_cos_lr:
+    part: IV
+    description: Cosine LR decay (use if val loss plateaus/oscillates late in training)
+    base: baseline
+    cos_lr: true
+
+  p4_regularize:
+    part: IV
+    description: Stronger regularization (use if val loss rises while train loss keeps falling)
+    base: baseline
+    weight_decay: 0.001
+    mixup: 0.1
+
+  # ---- Part V (optional): multi-version comparison ------------------------------
+  p5_yolov8n:
+    part: V
+    description: YOLOv8n with identical settings to the baseline
+    base: baseline
+    model: yolov8n.pt

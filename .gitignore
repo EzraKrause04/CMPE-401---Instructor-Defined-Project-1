@@ -6,3 +6,6 @@ datasets/
 __pycache__/
 .ipynb_checkpoints/
 .DS_Store
+
+# testset-challenge submissions (src/predict_challenge.py)
+submission/

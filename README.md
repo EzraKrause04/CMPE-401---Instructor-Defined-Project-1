@@ -12,9 +12,11 @@ This repo fine-tunes **YOLO26n** (Ultralytics) on **VisDrone2019-DET**, which ha
 |---|---|---|
 | I: Baseline | `baseline` | `results/baseline/` (metrics, curves, confusion matrix) |
 | II: Loss and fitting analysis | `baseline` | `results/baseline/loss_curves.png`, `loss_summary.json` |
+| II/III: Dataset size and object scale | none (label statistics) | `results/dataset/` (`src/dataset_stats.py`) |
 | III: Controlled experiment (image resolution) | `p3_imgsz960` vs `baseline` | `report/tables/part3.md` |
 | IV: Improvement cycle | `p4_cos_lr` **or** `p4_regularize` | `report/tables/part4.md` |
 | V: Multi-version comparison (optional) | `p5_yolov8n` vs `baseline` | `report/tables/part5.md` |
+| Optional: testset-challenge | best run | `submission/<name>.zip` (`src/predict_challenge.py`) |
 
 ## Repository layout
 
@@ -24,6 +26,8 @@ src/train.py               train a run by name; resumes automatically from last.
 src/evaluate.py            metrics JSON (P, R, mAP, per-class AP, params, GFLOPs, speed, train time)
 src/plot_curves.py         train vs val loss curves + over/underfitting summary
 src/compare.py             markdown comparison tables for the report
+src/dataset_stats.py       objects per image, class balance, box size vs detection stride at 640/960 px
+src/predict_challenge.py   testset-challenge predictions in the official VisDrone submission format
 notebooks/colab_runner.ipynb   one-click Colab wrapper around the scripts
 results/<run>/             committed artifacts (weights are not committed)
 report/REPORT.md           write-up
@@ -47,6 +51,21 @@ python src/train.py baseline
 python src/evaluate.py baseline --split val
 python src/evaluate.py baseline --split test
 python src/plot_curves.py baseline
+```
+
+### Locally (Apple silicon)
+
+Ultralytics never selects the Apple GPU on its own, so pass it with `--set`. Only settings that don't change the recipe go there. `cache=ram` makes epochs about 1.5× faster on an M3 Pro. Ultralytics warns that it can make runs non-deterministic.
+
+```bash
+python src/train.py p5_yolov8n --set device=mps cache=ram workers=8
+```
+
+### Dataset statistics and challenge submission
+
+```bash
+python src/dataset_stats.py                                        # results/dataset/: stats.json + 3 figures
+python src/predict_challenge.py --weights runs/<run>/weights/best.pt  # downloads testset-challenge on first use
 ```
 
 ### Building the report tables

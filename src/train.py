@@ -2,6 +2,7 @@
 
     python src/train.py baseline
     python src/train.py baseline --epochs 1 --fraction 0.05   # quick smoke test
+    python src/train.py p5_yolov8n --set device=mps cache=ram workers=8   # local Apple-silicon run
 """
 
 import argparse
@@ -33,6 +34,10 @@ def main():
     ap.add_argument("run")
     ap.add_argument("--epochs", type=int, help="override epochs (smoke tests only)")
     ap.add_argument("--fraction", type=float, help="train on a fraction of the dataset (smoke tests only)")
+    ap.add_argument(
+        "--set", nargs="*", default=[], metavar="KEY=VALUE",
+        help="machine-specific settings that don't change the recipe, e.g. device=mps cache=ram workers=8",
+    )
     args = ap.parse_args()
 
     params, meta = resolve_run(args.run)
@@ -41,6 +46,7 @@ def main():
         params["epochs"] = args.epochs
     if args.fraction:
         params["fraction"] = args.fraction
+    params.update({k: yaml.safe_load(v) for k, v in (kv.split("=", 1) for kv in args.set)})
     model_name = params.pop("model")
     # Smoke tests get their own folder so they never clobber or resume a real run.
     name = f"{args.run}_smoke" if smoke else args.run

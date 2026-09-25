@@ -1,0 +1,36 @@
+{
+  "run": "p5_yolov8n",
+  "part": "V",
+  "description": "YOLOv8n with identical settings to the baseline",
+  "split": "val",
+  "model": "yolov8n.pt",
+  "imgsz": 640,
+  "precision": 0.4584,
+  "recall": 0.3389,
+  "mAP50": 0.3295,
+  "mAP50-95": 0.1839,
+  "per_class_mAP50-95": {
+    "pedestrian": 0.1407,
+    "people": 0.0905,
+    "bicycle": 0.0289,
+    "car": 0.491,
+    "van": 0.2481,
+    "truck": 0.1953,
+    "tricycle": 0.1168,
+    "awning-tricycle": 0.0683,
+    "bus": 0.316,
+    "motor": 0.1434
+  },
+  "params_M": 3.01,
+  "GFLOPs": 8.2,
+  "weights_MB": 6.2,
+  "speed_ms_per_img": {
+    "preprocess": 0.26,
+    "inference": 19.46,
+    "loss": 0.0,
+    "postprocess": 4.13
+  },
+  "epochs_completed": 80,
+  "best_epoch": 80,
+  "train_time_hours": 8.1
+}

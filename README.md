@@ -13,7 +13,7 @@ This repo fine-tunes **YOLO26n** (Ultralytics) on **VisDrone2019-DET**, which ha
 | I: Baseline | `baseline` | `results/baseline/` (metrics, curves, confusion matrix) |
 | II: Loss and fitting analysis | `baseline` | `results/baseline/loss_curves.png`, `loss_summary.json` |
 | II/III: Dataset size and object scale | none (label statistics) | `results/dataset/` (`src/dataset_stats.py`) |
-| III: Controlled experiment (image resolution) | `p3_imgsz960` vs `baseline` | `report/tables/part3.md` |
+| III: Controlled experiment (learning rate) | `p3_lr005`, `baseline`, `p3_lr02` (lr0 = 0.005 / 0.01 / 0.02) | `report/tables/part3.md` |
 | IV: Improvement cycle | `p4_cos_lr` **or** `p4_regularize` | `report/tables/part4.md` |
 | V: Multi-version comparison (optional) | `p5_yolov8n` vs `baseline` | `report/tables/part5.md` |
 | Optional: testset-challenge | best run | `submission/<name>.zip` (`src/predict_challenge.py`) |
@@ -71,10 +71,10 @@ python src/predict_challenge.py --weights runs/<run>/weights/best.pt  # download
 ### Building the report tables
 
 ```bash
-python src/compare.py baseline p3_imgsz960 --out report/tables/part3.md
+python src/compare.py baseline p3_lr005 p3_lr02 --out report/tables/part3.md
 python src/compare.py baseline p4_cos_lr --out report/tables/part4.md
 python src/compare.py baseline p5_yolov8n --out report/tables/part5.md
-python src/plot_curves.py baseline p3_imgsz960
+python src/plot_curves.py baseline p3_lr005 p3_lr02
 ```
 
 ## Dataset

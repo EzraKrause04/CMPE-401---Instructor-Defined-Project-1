@@ -26,7 +26,21 @@ runs:
     description: YOLO26n, default augmentation, 640 px
     model: yolo26n.pt
 
-  # ---- Part III: controlled experiment (one variable changed: image resolution)
+  # ---- Part III: controlled experiment (one variable changed: initial learning rate)
+  # Three-point sweep around the baseline's lr0=0.01, same 80-epoch linear decay.
+  p3_lr005:
+    part: III
+    description: Baseline with half the initial learning rate (lr0=0.005)
+    base: baseline
+    lr0: 0.005
+
+  p3_lr02:
+    part: III
+    description: Baseline with double the initial learning rate (lr0=0.02)
+    base: baseline
+    lr0: 0.02
+
+  # Alternative Part III variable (not scheduled): input resolution
   p3_imgsz960:
     part: III
     description: Baseline at 960 px to test the small-object resolution hypothesis

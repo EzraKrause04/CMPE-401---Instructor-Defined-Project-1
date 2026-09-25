@@ -39,12 +39,13 @@ Use `results/baseline/loss_summary.json` for the numbers.
   - *Dataset size:* 6.5k images, but dense scenes with many labelled objects per image (count them from `results/baseline/labels.jpg`), and a long tail of rare classes (awning-tricycle, bus).
   - *Model capacity:* YOLO26n has about 2.4M parameters. Is that enough for dense, tiny objects at 640 px?
 
-## 4. Part III: Controlled experiment (input resolution)
+## 4. Part III: Controlled experiment (initial learning rate)
 
-- **Hypothesis:** VisDrone objects are often under 32 px. Raising input resolution from 640 to 960 px keeps more pixels per object, so small-object recall and mAP should improve, at higher compute cost.
-- **Controlled variable:** `imgsz` 640 → 960. Everything else is identical.
+- **Question:** Is the baseline's lr0 = 0.01 well chosen for fine-tuning pretrained YOLO26n on VisDrone? A higher rate converges faster but can overwrite useful COCO-pretrained features. A lower rate preserves them but may not finish adapting in 80 epochs.
+- **Controlled variable:** `lr0` ∈ {0.005, 0.01 (baseline), 0.02}. Everything else is identical: 80 epochs, SGD, linear decay to 1% of `lr0`, batch 16, 640 px, seed 0.
+- **Why not batch size:** Ultralytics accumulates gradients up to a nominal batch of 64, so changing `batch` barely changes the effective batch per optimizer step.
 
-TODO: paste `report/tables/part3.md`, add `results/compare_baseline_vs_p3_imgsz960.png`, and analyse accuracy against speed and GFLOPs.
+TODO: paste `report/tables/part3.md`, add `results/compare_baseline_vs_p3_lr005_vs_p3_lr02.png`, and analyse convergence speed, final mAP, and train/val loss gap at each learning rate.
 
 ## 5. Part IV: Iterative improvement
 

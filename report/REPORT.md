@@ -1,6 +1,6 @@
 # Design, Optimization, and Comparative Evaluation of Modern YOLO Models for Real-World Object Detection
 
-CMPE 401: Instructor-defined Project 1 · Ezra Krause
+CMPE 401: Instructor-defined Project 1 · Ezra Krause, Cole Robulack
 
 > **Status:** template. Sections marked `TODO` are filled in once the corresponding runs finish.
 > All numbers come from `results/<run>/metrics_*.json` and `report/tables/*.md`.

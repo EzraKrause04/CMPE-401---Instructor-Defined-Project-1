@@ -1,5 +1,7 @@
 # CMPE 401 Instructor-defined Project 1: YOLO26 on VisDrone
 
+**Authors:** Ezra Krause, Cole Robulack
+
 **Design, optimization, and comparative evaluation of modern YOLO models for real-world object detection.**
 
 This repo fine-tunes **YOLO26n** (Ultralytics) on **VisDrone2019-DET**, which has small objects in dense aerial scenes. It then analyses training dynamics, runs controlled experiments and an improvement cycle, and compares against **YOLOv8n**.

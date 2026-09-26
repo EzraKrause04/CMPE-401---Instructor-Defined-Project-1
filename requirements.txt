@@ -1,4 +1,4 @@
-ultralytics>=8.4.0
+ultralytics==8.4.162  # pinned: the baseline trained on 8.4.162; keep every run on the same version
 pandas
 matplotlib
 pyyaml

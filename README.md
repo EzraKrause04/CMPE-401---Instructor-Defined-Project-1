@@ -86,3 +86,17 @@ python src/plot_curves.py baseline p3_lr005 p3_lr02
 ## Fair-comparison controls
 
 All runs share the settings in `common`: 80 epochs, SGD with lr0 = 0.01, batch 16, seed 0, deterministic mode, and `max_det=1000`. The last one matters because some VisDrone images contain around 900 objects, and Ultralytics' default of 300 detections per image would cap recall. Each experiment changes **only** the keys listed under its entry. `src/compare.py` prints those differences next to every result, so each table documents its own controlled variable.
+
+## Deliverables breakdown
+
+From the assignment brief (CMPE 401 Instructor-defined Project 1). Status as of 2026-09-28.
+
+| Part | Required by the brief | Where it lives | Status |
+|---|---|---|---|
+| **I: Baseline** | Train YOLO26 (or YOLOv11) as the baseline. Record training and validation loss curves, mAP, precision and recall. | `baseline` run → `results/baseline/` | ✅ Trained on Colab T4 (val mAP50-95 0.181, mAP50 0.328). ⏳ Results folder not yet committed. |
+| **II: Loss and fitting analysis** | Plot training vs validation loss. Identify convergence, discuss overfitting and underfitting, and explain causes with reference to **dataset size** and **model capacity**. | `results/baseline/loss_curves.png`, `loss_summary.json`, `results/dataset/`, report §3 | ⏳ Plots generated, dataset stats committed. Write-up to do. |
+| **III: Controlled experiments** | At least one round of controlled experiments. Each states its settings, reports quantitative results, and gives analysis. | `p3_lr005`, `p3_lr02` (lr0 sweep around 0.01) → `report/tables/part3.md`, report §4 | ⏳ Runs defined, not yet trained. |
+| **IV: Iterative improvement** | At least one improvement cycle grounded in deep learning principles: Baseline → Settings → Controlled modification → Evaluation → Analysis → Conclusion. Include a comparison table, performance discussion and justification. | `p4_cos_lr` or `p4_regularize` → `report/tables/part4.md`, report §5 | ⏳ Candidates defined. Choose after Part III. |
+| **V: Multi-version comparison** *(optional)* | Compare against at least one other YOLO version (mAP, precision, recall, size, training time, speed, confusion matrix) in a structured table. | `p5_yolov8n` → `report/tables/part5.md`, report §6 | ✅ YOLOv8n trained (val mAP50-95 0.184, mAP50 0.330). ⏳ Table waits on baseline results. |
+| **Challenge** *(optional, bonus)* | Submit the final model on VisDrone testset-challenge. Top class results with justified design choices count as exceeding expectations. | `src/predict_challenge.py` → `submission/` | ⏳ Script ready. Run with the final model. |
+| **Reproducibility** | Present reproducible results via GitHub. | This README, `configs/experiments.yaml`, `src/`, `notebooks/colab_runner.ipynb` | ✅ Pipeline in place. Keep committing each run's `results/<run>/`. |

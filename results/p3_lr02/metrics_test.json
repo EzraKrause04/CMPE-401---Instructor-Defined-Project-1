@@ -1,0 +1,36 @@
+{
+  "run": "p3_lr02",
+  "part": "III",
+  "description": "Baseline with double the initial learning rate (lr0=0.02)",
+  "split": "test",
+  "model": "yolo26n.pt",
+  "imgsz": 640,
+  "precision": 0.4064,
+  "recall": 0.3119,
+  "mAP50": 0.28,
+  "mAP50-95": 0.1529,
+  "per_class_mAP50-95": {
+    "pedestrian": 0.0859,
+    "people": 0.0406,
+    "bicycle": 0.0316,
+    "car": 0.4083,
+    "van": 0.1921,
+    "truck": 0.2012,
+    "tricycle": 0.0707,
+    "awning-tricycle": 0.0714,
+    "bus": 0.3287,
+    "motor": 0.0979
+  },
+  "params_M": 2.51,
+  "GFLOPs": 5.9,
+  "weights_MB": 5.4,
+  "speed_ms_per_img": {
+    "preprocess": 1.02,
+    "inference": 2.88,
+    "loss": 0.0,
+    "postprocess": 2.92
+  },
+  "epochs_completed": 80,
+  "best_epoch": 68,
+  "train_time_hours": 3.54
+}

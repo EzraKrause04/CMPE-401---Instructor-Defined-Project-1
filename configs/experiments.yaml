@@ -52,8 +52,8 @@ runs:
   # `base:` to whichever Part III run won. Change a single thing per cycle.
   p4_cos_lr:
     part: IV
-    description: Cosine LR decay (use if val loss plateaus/oscillates late in training)
-    base: baseline
+    description: Part III winner (lr0=0.02) with cosine instead of linear LR decay
+    base: p3_lr02          # the Part III winner; compare p4_cos_lr against p3_lr02
     cos_lr: true
 
   p4_regularize:

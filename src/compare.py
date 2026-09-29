@@ -65,6 +65,11 @@ def main():
         row = [str(fn(m)) for _, fn in COLUMNS]
         row += [f"{delta:+.3f}", changed_settings(ref["run"], m["run"], config)]
         lines.append("| " + " | ".join(row) + " |")
+    lines += [
+        "",
+        "_Inference (ms/img) and Train time (h) are as measured on each run's own device and are not "
+        "comparable across runs; see results/speed/ and report §1.4._",
+    ]
 
     table = "\n".join(lines) + "\n"
     print(table)

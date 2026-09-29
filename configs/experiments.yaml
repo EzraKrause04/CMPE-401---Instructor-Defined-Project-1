@@ -56,6 +56,13 @@ runs:
     base: p3_lr02          # the Part III winner; compare p4_cos_lr against p3_lr02
     cos_lr: true
 
+  # Planned cycle 2 (not run): cycle 1 kept linear decay, so the baseline stays p3_lr02.
+  p4_imgsz960:
+    part: IV
+    description: Current best (p3_lr02, lr0=0.02, linear decay) at 960 px input
+    base: p3_lr02          # compare p4_imgsz960 against p3_lr02
+    imgsz: 960
+
   p4_regularize:
     part: IV
     description: Stronger regularization (use if val loss rises while train loss keeps falling)

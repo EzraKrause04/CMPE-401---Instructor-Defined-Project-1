@@ -61,7 +61,7 @@ def main():
     ap.add_argument("--source", type=Path, default=None, help="default: testset-challenge images (downloaded if missing)")
     ap.add_argument("--imgsz", type=int, default=None, help="default: the training imgsz stored in the checkpoint")
     ap.add_argument("--conf", type=float, default=0.001)
-    ap.add_argument("--iou", type=float, default=0.7, help="NMS IoU (ignored by NMS-free heads such as YOLO26)")
+    ap.add_argument("--iou", type=float, default=0.7, help="NMS IoU (also applies to YOLO26 under the default nms=None; ignored only with nms=False)")
     ap.add_argument("--max-det", type=int, default=500, help="VisDrone-DET evaluates at most 500 boxes per image")
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--augment", action="store_true", help="test-time augmentation (flip + multi-scale)")

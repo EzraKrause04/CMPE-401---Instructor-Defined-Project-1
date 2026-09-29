@@ -1,0 +1,36 @@
+{
+  "run": "baseline",
+  "part": "I",
+  "description": "YOLO26n, default augmentation, 640 px",
+  "split": "val",
+  "model": "yolo26n.pt",
+  "imgsz": 640,
+  "precision": 0.4393,
+  "recall": 0.344,
+  "mAP50": 0.3277,
+  "mAP50-95": 0.1808,
+  "per_class_mAP50-95": {
+    "pedestrian": 0.1503,
+    "people": 0.0927,
+    "bicycle": 0.0326,
+    "car": 0.489,
+    "van": 0.2451,
+    "truck": 0.1935,
+    "tricycle": 0.1103,
+    "awning-tricycle": 0.066,
+    "bus": 0.2768,
+    "motor": 0.152
+  },
+  "params_M": 2.51,
+  "GFLOPs": 5.9,
+  "weights_MB": 5.4,
+  "speed_ms_per_img": {
+    "preprocess": 1.08,
+    "inference": 3.05,
+    "loss": 0.0,
+    "postprocess": 3.67
+  },
+  "epochs_completed": 80,
+  "best_epoch": 69,
+  "train_time_hours": 3.84
+}

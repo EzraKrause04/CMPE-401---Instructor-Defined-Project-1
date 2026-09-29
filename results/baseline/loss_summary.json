@@ -1,0 +1,17 @@
+{
+  "components": [
+    "box_loss",
+    "cls_loss",
+    "l1_loss"
+  ],
+  "epochs": 80,
+  "train_loss_first": 5.9605,
+  "train_loss_final": 3.2984,
+  "val_loss_first": 5.0935,
+  "val_loss_min": 3.4404,
+  "val_loss_min_epoch": 70,
+  "val_loss_final": 3.444,
+  "val_rise_after_min_pct": 0.11,
+  "final_gap_val_minus_train": 0.1456,
+  "best_mAP50-95": 0.1803
+}

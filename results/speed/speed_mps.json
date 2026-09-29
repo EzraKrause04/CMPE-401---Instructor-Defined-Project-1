@@ -1,0 +1,34 @@
+{
+  "device": "mps",
+  "host": "Darwin arm64 arm",
+  "torch": "2.14.0",
+  "ultralytics": "8.4.162",
+  "imgsz": 640,
+  "batch": 1,
+  "models": {
+    "YOLO26n": {
+      "weights": "/Users/colerobulack/cmpe401-runs/colab/p3_lr02/best.pt",
+      "params_M_fused": 2.376786,
+      "GFLOPs_fused": 5.3194752,
+      "median_ms_per_image": {
+        "preprocess": 0.79,
+        "inference": 4.34,
+        "postprocess": 4.77,
+        "total": 9.9
+      },
+      "images_timed": 200
+    },
+    "YOLOv8n": {
+      "weights": "/Users/colerobulack/cmpe401-runs/ezra/runs/p5_yolov8n/weights/best.pt",
+      "params_M_fused": 3.007598,
+      "GFLOPs_fused": 8.092416,
+      "median_ms_per_image": {
+        "preprocess": 0.67,
+        "inference": 2.49,
+        "postprocess": 4.39,
+        "total": 7.55
+      },
+      "images_timed": 200
+    }
+  }
+}

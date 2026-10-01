@@ -158,3 +158,115 @@ From the assignment brief (CMPE 401 Instructor-defined Project 1). Status as of 
 | **V: Multi-version comparison** *(optional)* | Compare against at least one other YOLO version (mAP, precision, recall, size, training time, speed, confusion matrix) in a structured table. | `p5_yolov8n` vs `baseline` → `report/tables/part5_{val,test}.md`, `results/speed/`, report §6 | ✅ Table done, with inference speed measured on the same device. The two models are tied on accuracy. The baseline's confusion matrix is still pending, so the report uses the `p3_lr02` matrix instead. |
 | **Challenge** *(optional, bonus)* | Submit the final model on VisDrone testset-challenge. Top class results with justified design choices count as exceeding expectations. | `src/predict_challenge.py` → `submission/` | ⏳ Not submitted. The script is ready. |
 | **Reproducibility** | Present reproducible results via GitHub. | This README, `configs/experiments.yaml`, `src/`, `notebooks/colab_runner.ipynb`, report §8 | ✅ Code, recipes, results and instructions are in the repo. Weights are not in git; see [Weights](#weights). |
+
+## Write-up outline (draft)
+
+A section-by-section skeleton for the final write-up. Each section has the verified results, the figures to include, and prompts for what to write. Numbers come from `results/<run>/metrics_{val,test}.json`, `loss_summary.json`, `results/dataset/stats.json` and `results/speed/`. **mAP** means mAP50-95 unless noted. **Test** means VisDrone test-dev.
+
+### 1. Introduction
+**To write:**
+- Why real-time detection matters (drones, surveillance, smart cities) and why VisDrone is hard: tiny objects in dense aerial scenes.
+- The goal: fine-tune YOLO26n, understand its training dynamics, improve it through controlled experiments, and compare it with YOLOv8n.
+- A one-paragraph summary of the findings.
+
+### 2. Dataset and setup
+| | Train | Val | Test-dev |
+|---|---|---|---|
+| Images | 6,471 | 548 | 1,610 |
+| Boxes | 343,204 | 38,759 | — |
+
+- **Objects per image (train):** mean 53, median 42, max 902. This is why `max_det` was raised from 300 to 1000.
+- **Class imbalance (train):** car is 42.2% of boxes, awning-tricycle 0.95% (44.6× ratio).
+- **Object size:** at 640 px, 33% of train boxes are smaller than 8 px (one stride-8 cell) and 68% are smaller than 16 px. At 960 px those drop to 17% and 48%.
+- **Shared recipe:** 80 epochs, SGD, lr0 0.01, linear decay, batch 16, 640 px, seed 0, Ultralytics 8.4.162.
+
+| Run | Hardware | Training time |
+|---|---|---|
+| `baseline`, `p3_lr005`, `p3_lr02` | Colab T4 | 3.5–3.8 h each |
+| `p4_cos_lr` | A100 (rented) | 0.7 h |
+| `p5_yolov8n` | Apple M3 Pro | 8.1 h (includes ~3 h laptop sleep) |
+| `p3_lr005_mps` (noise check) | Apple M3 Pro | 6.9 h |
+
+**Figures:** `results/dataset/class_distribution.png`, `objects_per_image.png`, `box_size_vs_stride.png`
+
+### 3. Part I: Baseline (YOLO26n, lr0 0.01)
+| Split | Precision | Recall | mAP50 | mAP50-95 |
+|---|---|---|---|---|
+| Val | 0.439 | 0.344 | 0.328 | 0.181 |
+| Test | 0.387 | 0.307 | 0.270 | 0.146 |
+
+**Per class (test mAP):** car 0.407, bus 0.322, van 0.190, truck 0.188, motor 0.091, pedestrian 0.086, awning-tricycle 0.061, tricycle 0.057, people 0.037, bicycle 0.026.
+
+**Figures:** `results/baseline/loss_curves.png`. Still to add from Drive: confusion matrix and `results.csv`.
+
+**To write:** what the metrics mean; why val scores higher than test; why the small classes (people, bicycle) are so far behind car.
+
+### 4. Part II: Loss curves and fitting analysis
+- **Convergence:** val loss bottoms out at epoch 70, and mAP flattens after about epoch 50.
+- **Overfitting:** none. Val loss ends only 0.11% above its minimum, and the final val–train gap is small (0.15).
+- **Mosaic effect:** val loss sits *below* train loss for most of training, because mosaic augmentation makes training images harder. Mosaic switches off at epoch 71, train loss drops below val, and mAP gets a final bump.
+- **Underfitting:** both losses stay high and mAP plateaus low, which suggests the model is limited by capacity or resolution rather than by training time.
+
+**Discuss, as required by the brief:**
+- **Dataset size:** only 6.5k images, but 343k boxes and a 44.6× class imbalance. Rare classes have few examples.
+- **Model capacity:** YOLO26n has about 2.4M parameters. A third of objects are smaller than one stride-8 cell at 640 px, so detail is lost before the network ever sees it.
+
+**Figures:** `results/baseline/loss_curves.png`
+
+### 5. Part III: Controlled experiment (initial learning rate)
+**Setup:** only `lr0` changes. Everything else matches the baseline, and all three runs are on a T4.
+
+| lr0 | Val mAP | Test mAP | Test mAP50 | Test P | Test R | Val loss min epoch |
+|---|---|---|---|---|---|---|
+| 0.005 | 0.173 | 0.144 | 0.265 | 0.381 | 0.300 | 68 |
+| 0.01 (baseline) | 0.181 | 0.146 | 0.270 | 0.387 | 0.307 | 70 |
+| **0.02** | **0.183** | **0.153** | **0.280** | **0.406** | **0.312** | 79 |
+
+- **Noise:** repeating `p3_lr005` on a different machine changed mAP by 0.0003 (val) and 0.0015 (test). Differences under about 0.002 aren't meaningful.
+- **Result:** accuracy rises with lr0 on both splits. On test, 0.02 beats the baseline by +0.0066 (about 4× the noise); on val the gain (+0.0018) is within noise.
+- **Dynamics:** at 0.02, val loss is still at its minimum at epoch 79, so it was still improving. At 0.005 it bottoms out at 68.
+
+**Figures:** `results/compare_p3_lr005_vs_p3_lr02_vs_p4_cos_lr.png`, plus `report/tables/part3_{val,test}.md`
+
+**To write:** why a higher learning rate helps here (80 epochs isn't long enough at 0.01), why too high a rate could hurt pretrained weights, and why only one variable was changed.
+
+### 6. Part IV: Iterative improvement (cosine LR decay)
+**Chain:** baseline `p3_lr02` → settings → modification (`cos_lr: true`) → evaluation → analysis → conclusion.
+
+| Run | Schedule | Val mAP | Test mAP | Test mAP50 | Test P | Test R |
+|---|---|---|---|---|---|---|
+| `p3_lr02` | Linear | 0.183 | 0.153 | 0.280 | 0.406 | 0.312 |
+| `p4_cos_lr` | Cosine | 0.182 | 0.151 | 0.278 | 0.394 | 0.317 |
+
+- **Result:** no measurable gain. Both differences (−0.0006 val, −0.0015 test) are within noise.
+- **Caveat:** `p4_cos_lr` trained on an A100, not a T4.
+- **Conclusion:** `p3_lr02` stays the final model.
+
+**To write:**
+- **Justification:** why cosine decay should help in principle (a longer high-LR phase, then a gentle settle at the end).
+- **Why it didn't:** both schedules end at the same final rate after the same 80 epochs.
+- **Next cycle:** input resolution at 960 px, motivated by the 33% → 17% drop in sub-8 px boxes.
+
+### 7. Part V: YOLO26n vs YOLOv8n (optional)
+| Model | Val mAP | Test mAP | Test mAP50 | Params (fused) | GFLOPs (fused) | Weights | MPS ms/img | CPU ms/img |
+|---|---|---|---|---|---|---|---|---|
+| YOLO26n (baseline) | 0.181 | 0.146 | 0.270 | 2.38 M | 5.3 | 5.4 MB | 9.9 | 25.2 |
+| YOLOv8n | 0.184 | 0.145 | 0.262 | 3.01 M | 8.1 | 6.2 MB | 7.6 | 25.9 |
+
+Speeds are batch 1 at 640 px on the same Apple M3 Pro, the median of 200 images, with NMS for both models.
+
+**Per class (test mAP):** YOLOv8n is lower on bicycle (0.019 vs 0.026) and motor (0.079 vs 0.091), and about equal elsewhere.
+
+**To write:**
+- Accuracy is tied within noise.
+- YOLO26n is about 21% smaller with 34% fewer FLOPs, but isn't faster at batch 1. Explain why: post-processing dominates, and its NMS-free head isn't used by default.
+- Compare the two confusion matrices.
+
+### 8. Conclusions and limitations
+**To write:**
+- **Findings:** the best model is `p3_lr02` (test mAP 0.153). Learning rate mattered and the LR schedule didn't. Small objects are the main bottleneck.
+- **Limitations:** one seed per run, mixed hardware for Parts IV and V, and no resolution or model-size experiment.
+- **Future work:** 960 px input, the `s` model, and a test-challenge submission.
+
+### 9. Reproducibility
+**To write:** point to `configs/experiments.yaml`, `src/`, the Colab notebook and the "Reproducing results" section above. Note that weights aren't in git.
